@@ -1,0 +1,12 @@
+admin:
+  hash: $2a$12$iVSWvirx7FQo60psSuExku2HhYJyOcCxb/jg8pJFblTW08z9fhwue
+  #password is: GT5fr4DE3
+fluentd:
+  hash: $2a$12$vIE1kSZBO4d/v8XwffK11.50ZEB20YZcoQ9vmP50axSlZ..3W6ocq
+  #password is: JU7hy6GT5
+kibanaserver:
+  hash: $2a$12$vIE1kSZBO4d/v8XwffK11.50ZEB20YZcoQ9vmP50axSlZ..3W6ocq
+  #password is: JU7hy6GT5
+kibanaro:
+  hash: $2a$12$vIE1kSZBO4d/v8XwffK11.50ZEB20YZcoQ9vmP50axSlZ..3W6ocq
+  #password is: JU7hy6GT5

@@ -1,0 +1,24 @@
+version: "2"
+services:
+  fluentd:
+    container_name: fluentd
+    build: .
+    volumes:
+      - ./conf:/fluentd/etc
+      - ./certs/${FLHOST}:/fluentd/certs
+    expose:
+      - 24227
+      - "24227/udp"
+    environment:
+      - FLUENTD_CONF=fluent.conf
+      - LETSENCRYPT_HOST=${FLHOST}
+      - LETSENCRYPT_EMAIL=${EMAIL}
+      - VIRTUAL_HOST2=${FLHOST}
+      - VIRTUAL_PORT2=24227
+    networks:
+      - reverse-proxy
+networks:
+  reverse-proxy:
+    external:
+      name: reverse-proxy
+

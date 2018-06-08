@@ -1,0 +1,20 @@
+version: "2"
+services:
+  fluentd:
+    container_name: sfluentd
+    build: .
+    volumes:
+      - ./conf:/fluentd/etc
+    expose:
+      - "24224/udp"
+    ports:
+      - "24224:24224"
+    environment:
+      - FLUENTD_CONF=fluent.conf
+    networks:
+      - reverse-proxy
+networks:
+  reverse-proxy:
+    external:
+      name: reverse-proxy
+

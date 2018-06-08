@@ -1,0 +1,83 @@
+# Brings up elasticsearch cluster, FluentD logger & Kibana interface
+version: "2"
+services:
+  # Elasticsearch cluster setup for Master Node
+  elasticsearch:
+    build: elasticsearch/
+    container_name: elasticsearch
+    environment:
+      - cluster.name=es-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    expose:
+      - 9200
+    networks:
+      - reverse-proxy
+
+  # Elasticsearch slave node
+  elasticsearch_node1:
+    build: elasticsearch/
+    container_name: elasticsearch_node1
+    environment:
+      - cluster.name=es-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.zen.ping.unicast.hosts=elasticsearch"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    links:
+      - elasticsearch
+    volumes:
+      - esdata2:/usr/share/elasticsearch/data
+    networks:
+      - reverse-proxy
+  
+  # Bring up Kibana container
+  kibana:
+    build: kibana/
+    container_name: kibana
+    expose:
+      - 5601
+    volumes:
+      - ./kibana/config/:/usr/share/kibana/config
+    links:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - LETSENCRYPT_HOST=${HOST}
+      - LETSENCRYPT_EMAIL=${EMAIL}
+      - VIRTUAL_HOST1=${HOST}
+      - VIRTUAL_PORT1=5601
+    networks:
+      - reverse-proxy
+# Shared volumes between elastic search
+volumes:
+  esdata1:
+    driver: local
+  esdata2:
+    driver: local
+
+# Use comman network interface esnet between all containers
+networks:
+  reverse-proxy:
+    external:
+      name: reverse-proxy
